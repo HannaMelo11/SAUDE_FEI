@@ -1,6 +1,8 @@
 📋 Sistema de Gerenciamento de Saúde - Estrutura de Dados
+
 📌 Visão Geral
 Projeto desenvolvido para a disciplina de Estrutura de Dados (4º ciclo de Ciência da Computação) que implementa um sistema completo de gerenciamento de pacientes com múltiplas estruturas de dados interconectadas.
+
 
 🏗️ Estrutura do Projeto
 saude_fei/
@@ -21,6 +23,8 @@ saude_fei/
 └── desfazer/
     ├── desfazer.h        # Interface da pilha de operações
     └── desfazer.c
+
+    
 🔧 Funcionalidades Implementadas
 1. Módulo de Cadastro (Lista Encadeada)
 void cadastrarPaciente(Lista *lista, Registro novo)
