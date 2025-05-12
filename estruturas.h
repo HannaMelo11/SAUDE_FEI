@@ -28,4 +28,18 @@ typedef struct {
     int qtde;        // Contador de pacientes
 } Lista;
 
+//-----------------------------------------------
+
+typedef struct EFila {
+    Registro *dados;          // Ponteiro para os dados do paciente
+    struct EFila *proximo;    // Ponteiro para o próximo nó
+} EFila;
+
+typedef struct {
+    EFila *head;    // Ponteiro para o início da fila
+    EFila *tail;    // Ponteiro para o fim da fila
+    int qtde;       // Contador de pacientes na fila
+} Fila;
+
+// ------------------------------------------------
 #endif
