@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "estruturas.h"
+#include "estruturas/estruturas.h"
 #include "cadastro/cadastro.h"
 #include "atendimento/atendimento.h" 
+#include "atendimento_prioritario/atendimento_prioritario.h"
 
 // Função para exibir os dados do desenvolvedor
 void menu_sobre() {
@@ -35,7 +36,7 @@ void menu_cadastrar(Lista *lista) {
         switch (opcao) {
             case 1: {
                 Registro novo;
-                printf("\n--- NOVO PACIENTEee ---\n");
+                printf("\n--- NOVO PACIENTE ---\n");
                 printf("Nome: ");
                 scanf(" %99[^\n]", novo.nome);
                 printf("Idade: ");
@@ -176,19 +177,74 @@ void menu_atendimento(Lista *lista_pacientes, Fila *fila_atendimento) {
     } while(opcao != 0);
 }
 
+void menu_atendimento_prioritario(Lista *lista_pacientes, FilaPrioritaria *fila_prioritaria) {
+    int opcao;
+    char rg[20];
+    Registro *paciente;
+    
+    do {
+        printf("\n=== MENU ATENDIMENTO PRIORITARIO ===\n");
+        printf("1. Adicionar paciente a fila prioritaria\n");
+        printf("2. Chamar proximo paciente prioritario\n");
+        printf("3. Mostrar fila prioritaria\n");
+        printf("0. Voltar ao menu principal\n");
+        printf("Escolha: ");
+        scanf("%d", &opcao);
+        
+        while(getchar() != '\n');  // Limpa buffer
+        
+        switch(opcao) {
+            case 1:
+                printf("Digite o RG do paciente: ");
+                scanf(" %19[^\n]", rg);
+                paciente = consultarPaciente(lista_pacientes, rg);
+                
+                if (paciente) {
+                    enfileirar_prioritario(fila_prioritaria, paciente);
+                    printf("\n");
+                    printf("Paciente adicionado a fila prioritaria!\n");
+                } else {
+                    printf("\n");
+                    printf("Paciente não encontrado!\n");
+                }
+                break;
+                
+            case 2:
+                paciente = desenfileirar_prioritario(fila_prioritaria);
+                if (paciente) {
+                    printf("\n--- PROXIMO PACIENTE PRIORITARIO ---\n");
+                    printf("Nome: %s\n", paciente->nome);
+                    printf("Idade: %d\n", paciente->idade);
+                    printf("RG: %s\n", paciente->rg);
+                } else {
+                    printf("Fila prioritaria vazia!\n");
+                }
+                break;
+                
+            case 3:
+                mostrar_fila_prioritaria(fila_prioritaria);
+                break;
+        }
+    } while(opcao != 0);
+}
+
+
 int main() {
     Lista lista;
     Fila fila_atendimento;
+    FilaPrioritaria fila_prioritaria;
 
     inicializarLista(&lista);
     inicializarFila(&fila_atendimento);
+    inicializar_fila_prioritaria(&fila_prioritaria); 
     int opcao;
 
     do {
         printf("\n=== MENU PRINCIPAL ===\n");
         printf("1. SOBRE\n");
         printf("2. CADASTRAR\n");
-        printf("3. ATENDIMENTO\n");  // <-- Nova opção
+        printf("3. ATENDIMENTO\n"); 
+        printf("4. ATENDIMENTO PRIORITARIO\n");
         printf("0. SAIR\n");
         printf("Escolha: ");
         scanf("%d", &opcao);
@@ -203,11 +259,14 @@ int main() {
             case 3:  // <-- Novo caso
                 menu_atendimento(&lista, &fila_atendimento);
                 break;
+            case 4:  
+                menu_atendimento_prioritario(&lista, &fila_prioritaria);
+                break;
             case 0:
                 printf("Encerrando o sistema...\n");
                 break;
             default:
-                printf("Opção inválida!\n");
+                printf("Opção invalida!\n");
         }
     } while(opcao != 0);
 
