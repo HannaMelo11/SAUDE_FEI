@@ -42,4 +42,14 @@ typedef struct {
 } Fila;
 
 // ------------------------------------------------
+
+#define MAX_PRIORITARIO 20  // Capacidade máxima da fila prioritária
+
+typedef struct {
+    Registro *dados[MAX_PRIORITARIO];  // Vetor de ponteiros para Registro
+    int qtde;                          // Quantidade atual de pacientes
+} FilaPrioritaria;
+
+// ------------------------------------------------
+
 #endif
