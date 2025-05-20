@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "estruturas/estruturas.h"
+#include "estruturas.h"
 #include "cadastro/cadastro.h"
 #include "atendimento/atendimento.h" 
 #include "atendimento_prioritario/atendimento_prioritario.h"
+#include "pesquisa/pesquisa.h"
 
 // Função para exibir os dados do desenvolvedor
 void menu_sobre() {
@@ -228,15 +229,44 @@ void menu_atendimento_prioritario(Lista *lista_pacientes, FilaPrioritaria *fila_
     } while(opcao != 0);
 }
 
+void menu_pesquisa(ABB *arvore, Lista *lista) {
+    int opcao;
+    
+    do {
+        printf("\n=== MENU PESQUISA ===\n");
+        printf("1. Por ano de cadastro\n");
+        printf("2. Por mes de cadastro\n");
+        printf("3. Por dia de cadastro\n");
+        printf("4. Por idade\n");
+        printf("0. Voltar\n");
+        printf("Escolha: ");
+        scanf("%d", &opcao);
+        
+        while(getchar() != '\n');
+
+        if (opcao >= 1 && opcao <= 4) {
+            liberarArvore(arvore);
+            ELista *atual = lista->inicio;
+            while (atual) {
+                inserirNaABB(arvore, atual->dados, opcao - 1);
+                atual = atual->proximo;
+            }
+            mostrarPorCriterio(arvore, opcao - 1);
+        }
+    } while (opcao != 0);
+}
 
 int main() {
     Lista lista;
     Fila fila_atendimento;
     FilaPrioritaria fila_prioritaria;
+    ABB arvore; 
 
     inicializarLista(&lista);
     inicializarFila(&fila_atendimento);
     inicializar_fila_prioritaria(&fila_prioritaria); 
+    inicializarABB(&arvore); 
+
     int opcao;
 
     do {
@@ -245,6 +275,7 @@ int main() {
         printf("2. CADASTRAR\n");
         printf("3. ATENDIMENTO\n"); 
         printf("4. ATENDIMENTO PRIORITARIO\n");
+        printf("5. PESQUISA\n");
         printf("0. SAIR\n");
         printf("Escolha: ");
         scanf("%d", &opcao);
@@ -262,6 +293,9 @@ int main() {
             case 4:  
                 menu_atendimento_prioritario(&lista, &fila_prioritaria);
                 break;
+            case 5:
+                menu_pesquisa(&arvore, &lista);
+                break;
             case 0:
                 printf("Encerrando o sistema...\n");
                 break;
@@ -271,5 +305,6 @@ int main() {
     } while(opcao != 0);
 
     liberarLista(&lista);
+    liberarArvore(&arvore); 
     return 0;
 }
