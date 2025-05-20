@@ -24,7 +24,16 @@ void cadastrarPaciente(Lista *lista, Registro novo) {
         return;
     }
 
-    novo_no->dados = novo;
+    // Aloca memória para os dados do paciente
+    novo_no->dados = (Registro*)malloc(sizeof(Registro));
+    if (!novo_no->dados) {
+        fprintf(stderr, "Erro de alocação de memória!\n");
+        free(novo_no);
+        return;
+    }
+
+    // Copia os dados para a memória alocada
+    *(novo_no->dados) = novo;
     novo_no->proximo = lista->inicio;
     lista->inicio = novo_no;
     lista->qtde++;
@@ -38,8 +47,8 @@ void cadastrarPaciente(Lista *lista, Registro novo) {
 Registro* consultarPaciente(Lista *lista, const char *rg) {
     ELista *atual = lista->inicio;
     while (atual) {
-        if (strcmp(atual->dados.rg, rg) == 0) {
-            return &(atual->dados);
+        if (strcmp(atual->dados->rg, rg) == 0) {  // Note a mudança para ->
+            return atual->dados;
         }
         atual = atual->proximo;
     }
@@ -55,13 +64,13 @@ void mostrarLista(Lista *lista) {
 
     ELista *atual = lista->inicio;
     while (atual) {
-        printf("Nome: %s\n", atual->dados.nome);
-        printf("RG: %s\n", atual->dados.rg);
-        printf("Idade: %d\n", atual->dados.idade);
+        printf("Nome: %s\n", atual->dados->nome);  // Mudou para ->
+        printf("RG: %s\n", atual->dados->rg);
+        printf("Idade: %d\n", atual->dados->idade);
         printf("Data: %02d/%02d/%04d\n\n", 
-               atual->dados.entrada.dia, 
-               atual->dados.entrada.mes, 
-               atual->dados.entrada.ano);
+               atual->dados->entrada.dia, 
+               atual->dados->entrada.mes, 
+               atual->dados->entrada.ano);
         atual = atual->proximo;
     }
 }
@@ -70,10 +79,10 @@ void mostrarLista(Lista *lista) {
 void atualizarPaciente(Lista *lista, const char *rg, Registro novos_dados) {
     ELista *atual = lista->inicio;
     while (atual) {
-        if (strcmp(atual->dados.rg, rg) == 0) {
+        if (strcmp(atual->dados->rg, rg) == 0) {  // Mudou para ->
             // Mantém o RG original
             strcpy(novos_dados.rg, rg);
-            atual->dados = novos_dados;
+            *(atual->dados) = novos_dados;  // Copia os novos dados
             printf("Dados atualizados com sucesso!\n");
             
             // Limpa o buffer de entrada
@@ -92,13 +101,14 @@ void removerPaciente(Lista *lista, const char *rg) {
     ELista *anterior = NULL;
 
     while (atual) {
-        if (strcmp(atual->dados.rg, rg) == 0) {
+        if (strcmp(atual->dados->rg, rg) == 0) {  // Mudou para ->
             if (anterior) {
                 anterior->proximo = atual->proximo;
             } else {
                 lista->inicio = atual->proximo;
             }
-            free(atual);
+            free(atual->dados);  // Libera os dados do paciente
+            free(atual);         // Libera o nó
             lista->qtde--;
             printf("Paciente removido!\n");
             return;
@@ -115,7 +125,8 @@ void liberarLista(Lista *lista) {
     while (atual) {
         ELista *temp = atual;
         atual = atual->proximo;
-        free(temp);
+        free(temp->dados);  // Libera os dados do paciente
+        free(temp);         // Libera o nó
     }
     lista->inicio = NULL;
     lista->qtde = 0;
