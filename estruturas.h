@@ -18,7 +18,7 @@ typedef struct {
 
 // Nó da lista encadeada
 typedef struct ELista {
-    Registro dados;
+    Registro *dados;  // Agora é ponteiro
     struct ELista *proximo;
 } ELista;
 
@@ -51,5 +51,25 @@ typedef struct {
 } FilaPrioritaria;
 
 // ------------------------------------------------
+
+typedef struct EABB {
+    Registro *dados;         // Ponteiro para o registro
+    struct EABB *esq;        // Subárvore esquerda
+    struct EABB *dir;        // Subárvore direita
+} EABB;
+
+typedef struct {
+    EABB *raiz;             // Raiz da árvore
+    int qtde;               // Quantidade de nós
+} ABB;
+
+// Enum para critérios de pesquisa
+typedef enum {
+    POR_ANO,
+    POR_MES,
+    POR_DIA,
+    POR_IDADE
+} CriterioOrdenacao;
+
 
 #endif
